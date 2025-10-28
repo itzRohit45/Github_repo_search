@@ -12,30 +12,6 @@ https://github-repo-search-mu.vercel.app
 
 ---
 
-# 🔍 GitHub Repository Search
-
-A focused React + TypeScript micro-app to search GitHub repositories and save bookmarks locally.
-
-This README is the single-source reference for installing, running, and understanding the app. It also includes a short design notes section that explains architecture choices and outlines potential future work.
-
----
-
-## 🚀 Live Demo
-
-If deployed, add the public URL here. Example providers: Vercel, Netlify, GitHub Pages.
-
----
-
-## Quick overview (1‑minute)
-
-- A single text input (debounced at 300 ms) queries GitHub's Search Repositories endpoint.
-- The app displays the top 30 results as cards showing title, description, stars, language, and owner avatar.
-- Each card has a star toggle to bookmark repositories. Bookmarks persist to localStorage and survive page reloads.
-- You can either (1) filter the current search results to show only bookmarked items, or (2) switch to a view that shows all saved bookmarks.
-
----
-
-
 ## Table of contents
 
 1. Quick start
