@@ -125,26 +125,4 @@ Trade-offs / future work
 5. Toggle `All Bookmarks` to view all saved bookmarks
 6. Refresh the page: bookmarks should remain
 
----
 
-## Contribution
-
-PRs welcome. If you submit changes, please ensure `npm run lint` passes and add tests for new behavior.
-
----
-
-## License
-
-MIT
-
----
-
-If you'd like, I can:
-
-- add a small GitHub Actions workflow to run lint & build on every PR
-- add a short deployment guide with an actual Vercel deploy configuration
-- add a small test suite (jest + React Testing Library) with 2–3 tests for bookmarking and filter behavior
-
-If you want me to update README with your repo link and a live demo URL, tell me the deployed URL and I'll add it.
-
-**Built with ❤️ using React + TypeScript**
