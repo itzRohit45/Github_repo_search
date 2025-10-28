@@ -109,10 +109,61 @@ What I prioritized
 - UX: clear empty / loading / error states and a friendly welcome screen to exercise features quickly.
 
 Trade-offs / future work
-- Tests are not included yet — adding unit/integration tests is the next priority.
-- Pagination / infinite scroll: currently the app fetches 30 items per request (per requirements). If you need more results add paging.
-- Better rate-limit handling and optional GitHub authentication for higher API limits.
 
+### What Could Be Enhanced (Given More Time)
+- **Testing**: Unit tests (Jest), integration tests (React Testing Library)
+- **Pagination**: Load more results beyond first 30
+- **Advanced Filters**: Filter by language, stars, date
+- **Sorting**: Custom sort options (stars, forks, updated)
+- **Search History**: Track recent searches
+- **Keyboard Navigation**: Full keyboard accessibility
+- **Animation**: Smooth transitions for state changes
+- **PWA**: Offline support with service workers
+- **Dark Mode**: Theme toggle
+- **Export/Import**: Bookmarks backup functionality
+
+## 🚧 Possible Next Steps
+
+1. **Add Testing Suite**
+   - Jest + React Testing Library
+   - E2E tests with Playwright/Cypress
+   - Minimum 80% code coverage
+
+2. **Enhance Features**
+   - Infinite scroll or pagination
+   - Search history with local storage
+   - Share bookmark collections
+
+3. **Performance**
+   - Implement React.lazy for code splitting
+   - Add service worker for offline support
+   - Optimize bundle size
+
+4. **UX Improvements**
+   - Add keyboard shortcuts
+   - Implement drag-and-drop for bookmarks
+   - Add animations with Framer Motion
+
+5. **Deploy & Monitor**
+   - Set up CI/CD pipeline
+   - Add error tracking (Sentry)
+   - Performance monitoring (Web Vitals)
+
+## 📝 API Rate Limiting
+
+GitHub API allows 60 requests/hour for unauthenticated requests. For production:
+- Implement GitHub OAuth for higher limits (5000 requests/hour)
+- Add rate limit indicators to UI
+- Cache results for common searches
+
+## 🎬 How to Test the Demo
+
+1. **Open the app** - You'll see a welcome screen
+2. **Click a suggestion** - Try "React" or "TypeScript"
+3. **Bookmark repositories** - Click the ☆ button on any card
+4. **Filter bookmarks** - Use the "⭐ Bookmarked Only" toggle
+5. **Search custom terms** - Type anything in the search bar
+6. **Check persistence** - Refresh the page, bookmarks remain!
 ---
 
 
