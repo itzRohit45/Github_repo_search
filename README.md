@@ -8,7 +8,7 @@ This README is intended to be a single-source reference for installing, running,
 
 ## 🚀 Live Demo
 
-If deployed, add the public URL here. Example providers: Vercel, Netlify, GitHub Pages.
+https://github-repo-search-mu.vercel.app
 
 ---
 
