@@ -1,0 +1,47 @@
+.filter-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.filter-button {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid var(--secondary-color);
+  border-radius: 4px;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px var(--shadow);
+  font-family: 'Verdana', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.filter-button:hover {
+  border-color: var(--primary-color);
+  background-color: #fffef8;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px var(--shadow-hover);
+}
+
+.filter-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+.filter-button.active {
+  background: linear-gradient(to bottom, var(--primary-color), var(--primary-hover));
+  color: var(--background);
+  border-color: var(--primary-hover);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.bookmark-count {
+  font-weight: 700;
+  opacity: 0.9;
+}
