@@ -167,13 +167,5 @@ GitHub API allows 60 requests/hour for unauthenticated requests. For production:
 ---
 
 
-## How to test bookmarks and filters (manual)
-
-1. Start the dev server: `npm run dev`
-2. Search for a term (e.g. `react`) or click a popular suggestion
-3. Click the star on a card to bookmark it — confirm `github-bookmarks` is present in localStorage and contains the repository object
-4. Toggle `⭐ Bookmarks` to show only bookmarked items in the current results
-5. Toggle `All Bookmarks` to view all saved bookmarks
-6. Refresh the page: bookmarks should remain
 
 
