@@ -16,7 +16,7 @@ const RepositoryCard: React.FC<RepositoryCardProps> = memo(({ repository }) => {
       e.preventDefault()
       toggleBookmark(repository)
     },
-    [repository.id, toggleBookmark]
+    [repository, toggleBookmark]
   )
 
   const formatStars = (count: number): string => {

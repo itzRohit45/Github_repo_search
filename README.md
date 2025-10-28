@@ -1,193 +1,150 @@
 # 🔍 GitHub Repository Search
 
-A modern, performant React micro-app for searching and bookmarking GitHub repositories.
+A focused React + TypeScript micro-app to search GitHub repositories and save bookmarks locally.
+
+This README is intended to be a single-source reference for installing, running, and understanding the app. It also includes a short design notes section explaining architecture choices and future work.
+
+---
 
 ## 🚀 Live Demo
 
-[Deploy to Vercel/Netlify and add link here]
+If deployed, add the public URL here. Example providers: Vercel, Netlify, GitHub Pages.
 
-## ✨ Features
+---
 
-- **Real-time Search**: Debounced search (300ms) with GitHub's public API
-- **Smart Bookmarking**: Persist bookmarks to localStorage across sessions
-- **Filtered Views**: Toggle between all results and bookmarked repositories
-- **Responsive Design**: Works seamlessly on desktop and mobile
-- **Performance Optimized**: React.memo, useCallback, and proper state management
-- **Error Handling**: Graceful handling of loading, empty, and error states
-- **Quick Start Suggestions**: Popular search examples to get started immediately
+## Quick overview (1‑minute)
 
-## 🎯 Quick Start for Demo
+- One text input (debounced at 300ms) queries GitHub's public Search Repositories endpoint.
+- The app shows the top 30 results as cards (title, description, stars, language, owner avatar).
+- Cards have a star toggle to bookmark repositories. Bookmarks persist to localStorage and survive reloads.
+- You can (1) filter the current search results to show only bookmarked items, or (2) toggle a view to show all saved bookmarks.
 
-When you first open the app, you'll see a welcome screen with **popular search suggestions**:
-- ⚛️ React
-- 📘 TypeScript
-- ▲ Next.js
-- 💚 Vue
-- 🐍 Python
-- 🟢 Node.js
+---
 
-**Click any suggestion** to instantly see results and test the features!
+## Table of contents
 
-## 🛠️ Tech Stack
+1. Quick start
+2. Scripts
+3. How it works (implementation details)
+4. Project structure
+5. Decisions, trade-offs and future work
+---
 
-- **React 18** with TypeScript
-- **Vite** for blazing-fast development
-- **Context API + useReducer** for state management
-- **Custom hooks** for reusable logic
-- **CSS3** with CSS variables for theming
-- **ESLint + Prettier** for code quality
+## 1) Quick start
 
-## 📦 Installation
+Clone and run locally:
 
 ```bash
-# Clone the repository
 git clone <your-repo-url>
 cd Rohit
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
+
+# Open http://localhost:5173
 ```
 
-The app will open at http://localhost:5173 with an **interactive welcome screen** that guides you through testing all features.
+Notes:
+- The search input has id `search-input` (used by the header "Start searching" button to focus the input).
+- Bookmarks are stored under localStorage key `github-bookmarks` as a JSON array of repository objects.
 
-## 🎯 Available Scripts
+---
 
-```bash
-npm run dev      # Start development server (http://localhost:5173)
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-npm run format   # Format code with Prettier
-```
+## 2) Scripts
 
-## 📁 Project Structure
+- `npm run dev` — start Vite dev server
+- `npm run build` — typecheck (tsc) and build production bundle
+- `npm run preview` — preview production build
+- `npm run lint` — run ESLint (configured to fail on warnings)
+- `npm run format` — run Prettier over the codebase
+
+---
+
+## 3) How it works (implementation details)
+
+Search
+- `src/hooks/useGitHubSearch.ts` performs the GitHub API call to `GET https://api.github.com/search/repositories` and returns the first 30 results (per_page=30). The hook exposes `{ repositories, loading, error }`.
+- Debouncing is handled in `src/pages/SearchPage.tsx` via `useDebounce` (300ms). This reduces API calls.
+
+Bookmarks
+- Bookmarks are managed by `src/context/BookmarkContext.tsx` using `useReducer`.
+- Bookmarks are kept as a map (id -> Repository) for O(1) lookups and also exposed as an array for listing.
+- Persistence: bookmarks are read synchronously during reducer initialization from localStorage (key `github-bookmarks`) to avoid a race where an early save overwrites stored data (this was an important bugfix). Any changes to bookmarks are saved back to localStorage.
+- UI: `RepositoryCard.tsx` shows a star button that calls `toggleBookmark(repository)`.
+- Filter behavior (two modes):
+  - "Bookmarked only" (FilterToggle) limits the current search results to only those bookmarked.
+  - "All Bookmarks" button shows the entire set of saved bookmarks (across searches).
+
+Performance
+- Components use `React.memo` and event handlers are memoized with `useCallback`.
+- Expensive derived values (filtered lists) use `useMemo`.
+
+Error / empty states
+- `RepositoryList.tsx` contains dedicated UI for loading, empty and error states and helpful suggestions.
+
+Types
+- Repository shape is defined in `src/types/repository.ts`. Bookmarks store full repository objects so the bookmarked list can be rendered even if those repos aren’t present in current search results.
+
+---
+
+## 4) Project structure
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── SearchBar.tsx
-│   ├── FilterToggle.tsx
-│   ├── RepositoryCard.tsx
-│   └── RepositoryList.tsx
-├── context/            # React Context providers
-│   └── BookmarkContext.tsx
-├── hooks/              # Custom React hooks
-│   ├── useDebounce.ts
-│   └── useGitHubSearch.ts
-├── pages/              # Page components
-│   └── SearchPage.tsx
-├── types/              # TypeScript type definitions
-│   └── repository.ts
-├── App.tsx             # Root component
-└── main.tsx            # Entry point
+├─ components/        # UI components (SearchBar, RepositoryCard, RepositoryList, FilterToggle)
+├─ context/           # BookmarkProvider and hook (useBookmarks)
+├─ hooks/             # useDebounce, useGitHubSearch
+├─ pages/             # SearchPage (app page wiring)
+├─ types/             # Repository type
+├─ App.tsx            # Root component (header + page)
+└─ main.tsx           # App entry (mounts BookmarkProvider)
 ```
 
-## 🎨 Design Decisions
+---
 
-### Architecture
-- **Component-based**: Small, focused components for better reusability and testing
-- **Custom hooks**: Extracted logic into `useDebounce` and `useGitHubSearch` for separation of concerns
-- **Context API**: Lightweight state management for bookmarks without external dependencies
+## 5) Decisions, trade-offs and future work
 
-### UX Enhancements
-- **Welcome Screen**: Provides popular search suggestions for immediate testing
-- **Empty States**: Helpful suggestions when no results are found
-- **Feature Preview**: Shows key features on the landing page
-- **One-Click Testing**: Users can test the app without typing
+What I prioritized
+- Simplicity: no external state libraries. Context + reducer covers the bookmarking use-case well.
+- Performance: avoid unnecessary re-renders with memoization.
+- UX: clear empty / loading / error states and a friendly welcome screen to exercise features quickly.
 
-### Performance Optimizations
-1. **React.memo**: All components are memoized to prevent unnecessary re-renders
-2. **useCallback**: Event handlers are memoized to maintain referential equality
-3. **useMemo**: Filtered repository list is memoized for expensive computations
-4. **Debouncing**: 300ms debounce on search input to reduce API calls
-5. **Lazy Loading**: Could add pagination for large result sets (future enhancement)
-
-### State Management
-- **Context + Reducer**: Bookmark state uses reducer pattern for predictable updates
-- **localStorage**: Bookmarks persist across sessions with error handling
-- **Set data structure**: O(1) lookup for bookmark checks
-
-### Error Handling
-- Try-catch blocks for API calls and localStorage operations
-- User-friendly error messages
-- Loading states with visual feedback
-- Empty state guidance
-
-## 🔄 Trade-offs
-
-### What I Prioritized
-✅ Clean, maintainable code structure  
-✅ Performance optimizations (memo, callback, debounce)  
-✅ Type safety with TypeScript  
-✅ Accessibility (ARIA labels, semantic HTML)  
-✅ Responsive design  
-
-### What Could Be Enhanced (Given More Time)
-- **Testing**: Unit tests (Jest), integration tests (React Testing Library)
-- **Pagination**: Load more results beyond first 30
-- **Advanced Filters**: Filter by language, stars, date
-- **Sorting**: Custom sort options (stars, forks, updated)
-- **Search History**: Track recent searches
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Animation**: Smooth transitions for state changes
-- **PWA**: Offline support with service workers
-- **Dark Mode**: Theme toggle
-- **Export/Import**: Bookmarks backup functionality
-
-## 🚧 Possible Next Steps
-
-1. **Add Testing Suite**
-   - Jest + React Testing Library
-   - E2E tests with Playwright/Cypress
-   - Minimum 80% code coverage
-
-2. **Enhance Features**
-   - Infinite scroll or pagination
-   - Search history with local storage
-   - Share bookmark collections
-
-3. **Performance**
-   - Implement React.lazy for code splitting
-   - Add service worker for offline support
-   - Optimize bundle size
-
-4. **UX Improvements**
-   - Add keyboard shortcuts
-   - Implement drag-and-drop for bookmarks
-   - Add animations with Framer Motion
-
-5. **Deploy & Monitor**
-   - Set up CI/CD pipeline
-   - Add error tracking (Sentry)
-   - Performance monitoring (Web Vitals)
-
-## 📝 API Rate Limiting
-
-GitHub API allows 60 requests/hour for unauthenticated requests. For production:
-- Implement GitHub OAuth for higher limits (5000 requests/hour)
-- Add rate limit indicators to UI
-- Cache results for common searches
-
-## 🎬 How to Test the Demo
-
-1. **Open the app** - You'll see a welcome screen
-2. **Click a suggestion** - Try "React" or "TypeScript"
-3. **Bookmark repositories** - Click the ☆ button on any card
-4. **Filter bookmarks** - Use the "⭐ Bookmarked Only" toggle
-5. **Search custom terms** - Type anything in the search bar
-6. **Check persistence** - Refresh the page, bookmarks remain!
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-MIT License - feel free to use this project for learning or production.
+Trade-offs / future work
+- Tests are not included yet — adding unit/integration tests is the next priority.
+- Pagination / infinite scroll: currently the app fetches 30 items per request (per requirements). If you need more results add paging.
+- Better rate-limit handling and optional GitHub authentication for higher API limits.
 
 ---
+
+
+## How to test bookmarks and filters (manual)
+
+1. Start the dev server: `npm run dev`
+2. Search for a term (e.g. `react`) or click a popular suggestion
+3. Click the star on a card to bookmark it — confirm `github-bookmarks` is present in localStorage and contains the repository object
+4. Toggle `⭐ Bookmarks` to show only bookmarked items in the current results
+5. Toggle `All Bookmarks` to view all saved bookmarks
+6. Refresh the page: bookmarks should remain
+
+---
+
+## Contribution
+
+PRs welcome. If you submit changes, please ensure `npm run lint` passes and add tests for new behavior.
+
+---
+
+## License
+
+MIT
+
+---
+
+If you'd like, I can:
+
+- add a small GitHub Actions workflow to run lint & build on every PR
+- add a short deployment guide with an actual Vercel deploy configuration
+- add a small test suite (jest + React Testing Library) with 2–3 tests for bookmarking and filter behavior
+
+If you want me to update README with your repo link and a live demo URL, tell me the deployed URL and I'll add it.
 
 **Built with ❤️ using React + TypeScript**

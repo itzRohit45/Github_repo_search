@@ -12,12 +12,12 @@ interface RepositoryListProps {
 }
 
 const POPULAR_SEARCHES = [
-  { query: 'react', label: '⚛️ React' },
-  { query: 'typescript', label: '📘 TypeScript' },
-  { query: 'nextjs', label: '▲ Next.js' },
-  { query: 'vue', label: '💚 Vue' },
-  { query: 'python', label: '🐍 Python' },
-  { query: 'nodejs', label: '🟢 Node.js' },
+  { query: 'react', label: 'React' },
+  { query: 'typescript', label: 'TypeScript' },
+  { query: 'nextjs', label: 'Next.js' },
+  { query: 'vue', label: 'Vue' },
+  { query: 'python', label: ' Python' },
+  { query: 'nodejs', label: 'Node.js' },
 ]
 
 const RepositoryList: React.FC<RepositoryListProps> = memo(
